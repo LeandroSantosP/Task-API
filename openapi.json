@@ -6,7 +6,7 @@
     "description": "SQLite-backed CRUD API for a to-do list. Data persists between server restarts."
   },
   "servers": [{ "url": "http://localhost:3000" }],
-  "tags": [{ "name": "Tasks" }],
+  "tags": [{ "name": "Tasks" }, { "name": "Authentication" }, { "name": "Protected" }],
   "paths": {
     "/": {
       "get": {
@@ -18,6 +18,45 @@
       "get": {
         "summary": "Health check",
         "responses": { "200": { "description": "Service is healthy" } }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Create a Supabase user",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Credentials" } } } },
+        "responses": { "201": { "description": "User created" }, "400": { "$ref": "#/components/responses/BadRequest" } }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Log in with Supabase",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Credentials" } } } },
+        "responses": { "200": { "description": "Access and refresh tokens" }, "400": { "$ref": "#/components/responses/BadRequest" }, "401": { "$ref": "#/components/responses/Unauthorized" } }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Log out the authenticated user",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "204": { "description": "Logged out" }, "401": { "$ref": "#/components/responses/Unauthorized" } }
+      }
+    },
+    "/public/info": {
+      "get": {
+        "tags": ["Protected"],
+        "summary": "Public information",
+        "responses": { "200": { "description": "Public message" } }
+      }
+    },
+    "/protected/profile": {
+      "get": {
+        "tags": ["Protected"],
+        "summary": "Get the authenticated profile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Safe user profile" }, "401": { "$ref": "#/components/responses/Unauthorized" } }
       }
     },
     "/tasks": {
@@ -57,15 +96,24 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
     "schemas": {
       "Task": { "type": "object", "required": ["id", "title", "done"], "properties": { "id": { "type": "integer", "example": 1 }, "title": { "type": "string", "example": "Buy milk" }, "done": { "type": "boolean", "example": false } } },
       "CreateTask": { "type": "object", "required": ["title"], "properties": { "title": { "type": "string", "minLength": 1 } } },
       "UpdateTask": { "type": "object", "minProperties": 1, "properties": { "title": { "type": "string", "minLength": 1 }, "done": { "type": "boolean" } } },
       "Error": { "type": "object", "properties": { "error": { "type": "string" } } }
+      ,"Credentials": { "type": "object", "required": ["email", "password"], "properties": { "email": { "type": "string", "format": "email" }, "password": { "type": "string", "format": "password" } } }
     },
     "responses": {
       "BadRequest": { "description": "Invalid request body", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
-      "NotFound": { "description": "Task not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+      "NotFound": { "description": "Task not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "Unauthorized": { "description": "Authentication failed", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
     }
   }
 }
