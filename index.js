@@ -70,7 +70,7 @@ app.post('/tasks', (req, res) => {
     }
 
     const result = db.prepare('INSERT INTO tasks (title, done) VALUES (?, ?)').run(title.trim(), 0);
-    const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(result.lastInsertRowid);
+    const task = findTaskById(result.lastInsertRowid);
 
     res.status(201).json(toTask(task));
 });
