@@ -1,4 +1,5 @@
 node_modules/
 server.pid
 tasks.db
+.env
 npm-debug.log*
