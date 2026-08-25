@@ -3,7 +3,7 @@
   "info": {
     "title": "Task API",
     "version": "1.0.0",
-    "description": "In-memory CRUD API for a to-do list. Data resets when the server restarts."
+    "description": "SQLite-backed CRUD API for a to-do list. Data persists between server restarts."
   },
   "servers": [{ "url": "http://localhost:3000" }],
   "tags": [{ "name": "Tasks" }],
