@@ -66,6 +66,10 @@ function extractBearerToken(req) {
     return tokenMatch ? tokenMatch[1] : null;
 }
 
+function safeUser(user) {
+    return { id: user.id, email: user.email };
+}
+
 async function authenticate(req, res, next) {
     const token = extractBearerToken(req);
 
@@ -150,7 +154,7 @@ app.get('/public/info', (req, res) => {
 });
 
 app.get('/protected/profile', authenticate, (req, res) => {
-    res.json({ id: req.user.id, email: req.user.email });
+    res.json(safeUser(req.user));
 });
 
 app.post('/auth/logout', authenticate, async (req, res) => {
