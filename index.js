@@ -77,7 +77,7 @@ app.post('/tasks', (req, res) => {
 
 app.put('/tasks/:id', (req, res) => {
     const id = Number.parseInt(req.params.id, 10);
-    const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
+    const task = findTaskById(id);
 
     if (!task) {
         return res.status(404).json({ error: 'Task not found' });
@@ -95,7 +95,7 @@ app.put('/tasks/:id', (req, res) => {
     const updatedDone = hasValidDone ? done : Boolean(task.done);
     db.prepare('UPDATE tasks SET title = ?, done = ? WHERE id = ?').run(updatedTitle, updatedDone ? 1 : 0, id);
 
-    res.json(toTask(db.prepare('SELECT * FROM tasks WHERE id = ?').get(id)));
+    res.json(toTask(findTaskById(id)));
 });
 
 app.delete('/tasks/:id', (req, res) => {
