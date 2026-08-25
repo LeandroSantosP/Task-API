@@ -1,6 +1,6 @@
 # Task API
 
-A small in-memory to-do list CRUD API built with Node.js, Express, and Swagger UI. Tasks reset when the server restarts.
+A to-do list CRUD API built with Node.js, Express, SQLite, and Swagger UI. Tasks are stored in `tasks.db` and survive server restarts.
 
 ## Run
 
@@ -10,6 +10,16 @@ npm start
 ```
 
 The API runs at `http://localhost:3000`.
+
+## Database
+
+SQLite was chosen because it is a single-file database with zero setup, while still providing reliable persistence between restarts. The `tasks.db` file and its `tasks` table are created automatically when the server starts. The database file is ignored by Git.
+
+Example SQL query:
+
+```sql
+SELECT * FROM tasks WHERE done = 1;
+```
 
 ## Endpoints
 
@@ -59,4 +69,6 @@ Invalid input returns `400 Bad Request`:
 
 Open `http://localhost:3000/docs` to explore and execute every operation through Swagger UI.
 
-![alt text](image.png)
+[Insert DB Browser Screenshot Here]
+
+![Swagger UI screenshot](image.png)
