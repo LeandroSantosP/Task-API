@@ -1,6 +1,6 @@
 # Task API
 
-A to-do list CRUD API built with Node.js, Express, SQLite, and Swagger UI. Tasks are stored in `tasks.db` and survive server restarts.
+A secured to-do list CRUD API built with Node.js, Express, SQLite, Supabase Auth, and Swagger UI. Tasks are stored in `tasks.db` and survive server restarts.
 
 ## Run
 
@@ -10,6 +10,16 @@ npm start
 ```
 
 After cloning the repository, run `npm install` once and use `npm start` to launch the API at `http://localhost:3000`. The SQLite database is created automatically on startup.
+
+## Authentication setup
+
+Copy `.env.example` to `.env` and fill in the Supabase project URL and **anon** key:
+
+```bash
+cp .env.example .env
+```
+
+Never use a `service_role` key and never commit `.env`. The server sends credentials only to Supabase Auth and never stores passwords locally.
 
 ## Database
 
@@ -35,6 +45,17 @@ The seed inserts three example tasks only when the database is empty. Restarting
 | PUT | `/tasks/:id` | Update a task |
 | DELETE | `/tasks/:id` | Delete a task |
 | GET | `/docs` | Interactive Swagger UI |
+| POST | `/auth/signup` | Create a Supabase user; no auth required |
+| POST | `/auth/login` | Log in and receive tokens; no auth required |
+| POST | `/auth/logout` | Log out; Bearer token required |
+| GET | `/public/info` | Public information; no auth required |
+| GET | `/protected/profile` | User profile; Bearer token required |
+
+Protected routes require this header:
+
+```text
+Authorization: Bearer <access_token>
+```
 
 ## CRUD validation
 
@@ -72,6 +93,10 @@ Invalid input returns `400 Bad Request`:
 ```
 
 Open `http://localhost:3000/docs` to explore and execute every operation through Swagger UI.
+
+## Auth Swagger screenshot
+
+[Insert Swagger Screenshot Here]
 
 ## DB Browser screenshot
 
