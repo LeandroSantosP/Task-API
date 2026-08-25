@@ -9,7 +9,7 @@ npm install
 npm start
 ```
 
-The API runs at `http://localhost:3000`.
+After cloning the repository, run `npm install` once and use `npm start` to launch the API at `http://localhost:3000`. The SQLite database is created automatically on startup.
 
 ## Database
 
@@ -20,6 +20,8 @@ Example SQL query:
 ```sql
 SELECT * FROM tasks WHERE done = 1;
 ```
+
+The seed inserts three example tasks only when the database is empty. Restarting the server does not duplicate them. Every database operation uses parameterized SQL queries (`?`).
 
 ## Endpoints
 
@@ -34,9 +36,9 @@ SELECT * FROM tasks WHERE done = 1;
 | DELETE | `/tasks/:id` | Delete a task |
 | GET | `/docs` | Interactive Swagger UI |
 
-## Examples
+## CRUD validation
 
-Create a task:
+Create a task with `201 Created`:
 
 ```bash
 curl -i -X POST http://localhost:3000/tasks \
@@ -51,7 +53,7 @@ Content-Type: application/json; charset=utf-8
 {"id":4,"title":"Buy milk","done":false}
 ```
 
-Update and delete it:
+Update the task with `200 OK` and delete it with `204 No Content`:
 
 ```bash
 curl -i -X PUT http://localhost:3000/tasks/4 \
@@ -61,6 +63,8 @@ curl -i -X PUT http://localhost:3000/tasks/4 \
 curl -i -X DELETE http://localhost:3000/tasks/4
 ```
 
+To verify persistence, create a task, stop the server, run `npm start` again, and call `GET /tasks`. The task remains available because it is stored in `tasks.db`.
+
 Invalid input returns `400 Bad Request`:
 
 ```text
@@ -69,6 +73,14 @@ Invalid input returns `400 Bad Request`:
 
 Open `http://localhost:3000/docs` to explore and execute every operation through Swagger UI.
 
-[Insert DB Browser Screenshot Here]
+## DB Browser screenshot
+
+Open `tasks.db` with DB Browser for SQLite after running the CRUD tests and insert the screenshot below:
+
+`[Insert DB Browser Screenshot Here]`
+
+<!-- Replace the placeholder above with: ![SQLite database in DB Browser](db-browser-screenshot.png) -->
+
+## Swagger screenshot
 
 ![Swagger UI screenshot](image.png)
