@@ -30,6 +30,10 @@ function toTask(row) {
     return { id: row.id, title: row.title, done: Boolean(row.done) };
 }
 
+function findTaskById(id) {
+    return db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
+}
+
 app.get('/', (req, res) => {
     res.json({
         name: 'Task API',
@@ -49,7 +53,7 @@ app.get('/tasks', (req, res) => {
 
 app.get('/tasks/:id', (req, res) => {
     const id = Number.parseInt(req.params.id, 10);
-    const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
+    const task = findTaskById(id);
 
     if (!task) {
         return res.status(404).json({ error: 'Task not found' });
