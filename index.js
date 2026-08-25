@@ -77,7 +77,9 @@ async function authenticate(req, res, next) {
         return res.status(401).json({ error: authErrors.missingToken });
     }
 
-    if (!requireSupabase(res)) return;
+    if (!supabase) {
+        return res.status(401).json({ error: authErrors.invalidToken });
+    }
 
     try {
         const { data, error } = await supabase.auth.getUser(token);
