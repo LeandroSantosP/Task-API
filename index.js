@@ -86,7 +86,7 @@ async function authenticate(req, res, next) {
         }
 
         req.user = data.user;
-        next();
+        return next();
     } catch (error) {
         res.status(401).json({ error: authErrors.invalidToken });
     }
