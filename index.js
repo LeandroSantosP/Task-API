@@ -60,18 +60,23 @@ function requireSupabase(res) {
     return true;
 }
 
-async function authenticate(req, res, next) {
+function extractBearerToken(req) {
     const authorization = req.get('Authorization') || '';
     const tokenMatch = authorization.match(/^Bearer\s+(\S+)$/i);
+    return tokenMatch ? tokenMatch[1] : null;
+}
 
-    if (!tokenMatch) {
+async function authenticate(req, res, next) {
+    const token = extractBearerToken(req);
+
+    if (!token) {
         return res.status(401).json({ error: authErrors.missingToken });
     }
 
     if (!requireSupabase(res)) return;
 
     try {
-        const { data, error } = await supabase.auth.getUser(tokenMatch[1]);
+        const { data, error } = await supabase.auth.getUser(token);
         if (error || !data.user) {
             return res.status(401).json({ error: authErrors.invalidToken });
         }
