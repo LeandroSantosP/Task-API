@@ -96,7 +96,7 @@ Open `http://localhost:3000/docs` to explore and execute every operation through
 
 ## Auth Swagger screenshot
 
-[Insert Swagger Screenshot Here]
+![alt text](image-2.png)
 
 ## DB Browser screenshot
 
