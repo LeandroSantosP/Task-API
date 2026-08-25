@@ -58,3 +58,5 @@ Invalid input returns `400 Bad Request`:
 ```
 
 Open `http://localhost:3000/docs` to explore and execute every operation through Swagger UI.
+
+![alt text](image.png)
