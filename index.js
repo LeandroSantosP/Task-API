@@ -12,6 +12,11 @@ const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = supabaseUrl && supabaseKey && supabaseUrl.startsWith('http')
     ? createClient(supabaseUrl, supabaseKey)
     : null;
+const authErrors = {
+    missingToken: 'Access token required',
+    invalidToken: 'Invalid or expired token',
+    invalidLogin: 'Invalid login credentials'
+};
 app.use(express.json());
 
 db.exec(`
@@ -60,7 +65,7 @@ async function authenticate(req, res, next) {
     const tokenMatch = authorization.match(/^Bearer\s+(\S+)$/i);
 
     if (!tokenMatch) {
-        return res.status(401).json({ error: 'Access token required' });
+        return res.status(401).json({ error: authErrors.missingToken });
     }
 
     if (!requireSupabase(res)) return;
@@ -68,13 +73,13 @@ async function authenticate(req, res, next) {
     try {
         const { data, error } = await supabase.auth.getUser(tokenMatch[1]);
         if (error || !data.user) {
-            return res.status(401).json({ error: 'Invalid or expired token' });
+            return res.status(401).json({ error: authErrors.invalidToken });
         }
 
         req.user = data.user;
         next();
     } catch (error) {
-        res.status(401).json({ error: 'Invalid or expired token' });
+        res.status(401).json({ error: authErrors.invalidToken });
     }
 }
 
@@ -123,7 +128,7 @@ app.post('/auth/login', async (req, res) => {
     try {
         const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error || !data.session) {
-            return res.status(401).json({ error: 'Invalid login credentials' });
+            return res.status(401).json({ error: authErrors.invalidLogin });
         }
 
         res.json({
@@ -131,7 +136,7 @@ app.post('/auth/login', async (req, res) => {
             refresh_token: data.session.refresh_token
         });
     } catch (error) {
-        res.status(401).json({ error: 'Invalid login credentials' });
+        res.status(401).json({ error: authErrors.invalidLogin });
     }
 });
 
@@ -147,12 +152,12 @@ app.post('/auth/logout', authenticate, async (req, res) => {
     try {
         const { error } = await supabase.auth.signOut();
         if (error) {
-            return res.status(401).json({ error: 'Invalid or expired token' });
+            return res.status(401).json({ error: authErrors.invalidToken });
         }
 
         res.status(204).send();
     } catch (error) {
-        res.status(401).json({ error: 'Invalid or expired token' });
+        res.status(401).json({ error: authErrors.invalidToken });
     }
 });
 
