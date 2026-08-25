@@ -77,9 +77,7 @@ Open `http://localhost:3000/docs` to explore and execute every operation through
 
 Open `tasks.db` with DB Browser for SQLite after running the CRUD tests and insert the screenshot below:
 
-`[Insert DB Browser Screenshot Here]`
-
-<!-- Replace the placeholder above with: ![SQLite database in DB Browser](db-browser-screenshot.png) -->
+![SQLite database in DB Browser](image-1.png)
 
 ## Swagger screenshot
 
